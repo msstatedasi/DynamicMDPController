@@ -24,15 +24,15 @@ public class Reward implements RewardFunction {
     private double maxCost = -1;
     private double minExecutionTime = Double.MAX_VALUE;
     private double minCost = Double.MAX_VALUE;
-    private double wt=1, wc=0;
+    private double wt = 1, wc = 0;
     private HashMap<GMEAction, Double> reward = null;
 
     public Reward() {
         reward = new HashMap<>();
     }
-    
+
     public void cacheActionRewards(List<GMEAction> actions) {
-        
+
         for (GMEAction a : actions) {
             if (a.getExecTime() > maxExecutionTime) {
                 maxExecutionTime = a.getExecTime();
@@ -66,6 +66,10 @@ public class Reward implements RewardFunction {
 //        } else {
 //        return -10;
 //        }
+        DynamicMDPState sPrime = (DynamicMDPState) state1;
+        if (sPrime.isForbidden()) {
+            return Double.NEGATIVE_INFINITY;
+        }
         GMEAction a = (GMEAction) action;
         return reward.get(a);
     }

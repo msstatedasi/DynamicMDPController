@@ -19,6 +19,7 @@ import java.util.Map;
 public class DynamicMDPState implements MutableState {
 
     private Hashtable<Object, Object> attributes;
+    private boolean forbidden = false;
 
     public Hashtable<Object, Object> getAttributes() {
         return attributes;
@@ -30,6 +31,7 @@ public class DynamicMDPState implements MutableState {
 
     public DynamicMDPState() {
         attributes = new Hashtable<>();
+        forbidden=false;
     }
     
     public void putAllAttributes(Map<Object,Object> map) {
@@ -38,6 +40,11 @@ public class DynamicMDPState implements MutableState {
 
     public DynamicMDPState(Hashtable<Object, Object> attrs) {
         this.attributes = attrs;
+        this.forbidden=false;
+    }
+    public DynamicMDPState(Hashtable<Object, Object> attrs, boolean forbidden) {
+        this.attributes = attrs;
+        this.forbidden = forbidden;
     }
 
     @Override
@@ -61,6 +68,16 @@ public class DynamicMDPState implements MutableState {
         return attributes.get(key);
     }
 
+    public boolean isForbidden() {
+        return forbidden;
+    }
+
+    public void setForbidden(boolean forbidden) {
+        this.forbidden = forbidden;
+    }
+    
+    
+
     @Override
     public DynamicMDPState copy() {
 //        Hashtable newAttr = new Hashtable(attributes);
@@ -71,7 +88,7 @@ public class DynamicMDPState implements MutableState {
             key = key.intern();
             newAttr.put(key, attributes.get(key));
         }
-        return new DynamicMDPState(newAttr);
+        return new DynamicMDPState(newAttr,forbidden);
     }
 
 }
