@@ -14,6 +14,7 @@ import dynamicmdpcontroller.Expression;
 import dynamicmdpcontroller.controllers.RoomDomainGenerator;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +35,9 @@ public class GMEAction extends DynamicMDPAction {
     private List<String> preConditionAttributes = null;
 
     private Hashtable<String, String> attributeTypes;
+    
+    private List<String> actionParameters;
+    private HashMap<String, Object> actionValues;
 
     public static final String ATT_INTERNAL_CLOCK = "InternalClock";
 
@@ -43,6 +47,13 @@ public class GMEAction extends DynamicMDPAction {
         postConditionAttributes = new ArrayList<>();
         preConditionAttributes = new ArrayList<>();
         this.attributeTypes = attributeTypes;
+        this.actionParameters = new ArrayList();
+        this.actionValues = new HashMap<>();
+        
+        this.actionParameters.add("cost");
+        this.actionParameters.add("exeTime");
+        
+        this.actionValues.put("cost", this.getCost());
     }
 
     @Override
@@ -254,6 +265,22 @@ public class GMEAction extends DynamicMDPAction {
             }
         }
         return actionAttributes;
+    }
+
+    public List<String> getActionParameterNames() {
+        List<String> names = new ArrayList();
+        names.add("cost");
+        names.add("exeTime");
+        return names;
+    }
+    public void updateHashMaps() 
+    {
+        this.actionValues.put("cost", this.getCost());
+        this.actionValues.put("exeTime", this.getExecTime());
+    }
+
+    public Object getActionParameterValues(String valueName) {
+        return actionValues.get(valueName);
     }
 
 }

@@ -45,7 +45,7 @@ public class HomeDomainGenerator {
     public Hashtable<String, String> attributeTypes;
     private List<GMEAction> actions = null;
     
-    public HomeDomainGenerator(String termPath) throws Exception {
+    public HomeDomainGenerator(String termPath, double wc, double wt) throws Exception {
         attributeTypes = new Hashtable<>();
         domain = new SADomain();
         actionType = new MyActionType();
@@ -180,6 +180,7 @@ public class HomeDomainGenerator {
                         action.setPrefix("");
                         action.setCost(bean.getCost());
                         action.setExecTime(bean.getExecTime());
+                        action.updateHashMaps();
                         actionType.addAction(action.actionName(), action);
                         this.actions.add(action);
                     }

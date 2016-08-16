@@ -53,7 +53,8 @@ public class Reward implements RewardFunction {
         }
     }
 
-    private double rewardFunction(GMEAction a) {
+    private double rewardFunction(GMEAction a) 
+    {
         double ret = -wt * a.getExecTime() - wc * a.getCost();
 //                / (maxExecutionTime - minExecutionTime + 1 ) 
         return ret;
@@ -82,7 +83,8 @@ public class Reward implements RewardFunction {
         return wt;
     }
 
-    public void setWt(double wt) {
+    public void setWt(double wt) 
+    {
         this.wt = wt;
     }
 

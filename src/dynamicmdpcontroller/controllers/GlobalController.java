@@ -38,18 +38,25 @@ public class GlobalController {
     private List<Location> locations = null;
     private Termination[] localGoals = null;
     private ValueIteration planner = null;
+    
+    private double gamma;
+    private double wc;
+    private double wt;
 
     public GlobalController(String termPath, List<Location> locations,
-            HashMap<Object, Object> stateAttributes, Termination[] localGoals) throws Exception {
+            HashMap<Object, Object> stateAttributes, Termination[] localGoals, double gamma, double wc, double wt) throws Exception {
+        this.gamma = gamma;
+        this.wc = wc;
+        this.wt = wt;
         this.locations = locations;
         this.stateAttributes = stateAttributes;
         this.localGoals = localGoals;
-        this.currentState = init(termPath);
+        this.currentState = init(termPath, wc, wt);
     }
 
-    private DynamicMDPState init(String termPath) throws Exception {
+    private DynamicMDPState init(String termPath, double wc, double wt) throws Exception {
         System.out.println("---- Working on global home ----");
-        domainGen = new HomeDomainGenerator(termPath);
+        domainGen = new HomeDomainGenerator(termPath, wc, wt);
         domainGen.initialStateGenerator(locations);
         domainGen.registerActions(locations);
         currentState = new DynamicMDPState();
@@ -79,7 +86,7 @@ public class GlobalController {
         System.out.println(StateUtilities.stateToString(filteredState));
 
         SimpleHashableStateFactory hashingFactory = new SimpleHashableStateFactory(false);
-        planner = new ParallelVI(fdg.getDomain(), 0.99, hashingFactory, 1e-10, 100, stateGenThread, nThread);
+        planner = new ParallelVI(fdg.getDomain(), gamma, hashingFactory, 1e-10, 100, stateGenThread, nThread);
 //            ValueIteration planner = new ValueIteration(fdg.getDomain(), 0.99, hashingFactory, 1e-3, 100);
 //            planner.performReachabilityFrom(filteredState);
         Policy p = planner.planFromState(filteredState);

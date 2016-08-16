@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  *
@@ -89,6 +90,24 @@ public class DynamicMDPState implements MutableState {
             newAttr.put(key, attributes.get(key));
         }
         return new DynamicMDPState(newAttr,forbidden);
+    }
+    
+        @Override
+    public boolean equals(Object o) {
+
+        boolean ret = false;
+        if (o instanceof DynamicMDPState) {
+            DynamicMDPState s = (DynamicMDPState) o;
+            ret = s.getAttributes().equals(this.attributes);
+        }
+        return ret;
+    }
+    @Override
+
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.attributes);
+        return hash;
     }
 
 }

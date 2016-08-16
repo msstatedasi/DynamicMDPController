@@ -40,7 +40,9 @@ public class DynamicMDPController {
 
 
 
-    private DynamicMDPController() {
+    public DynamicMDPController() 
+    {
+        
     }
 
     public static DynamicMDPController getInstance() {
@@ -57,10 +59,10 @@ public class DynamicMDPController {
         nThread = Integer.valueOf(args[2]);
 
         controller = DynamicMDPController.getInstance();
-        controller.run();
+        controller.run(1, 0 , .99);
     }
 
-    private void run() throws Exception {
+    private void run(double wc, double wt, double gamma) throws Exception {
         //Reading all the room informations
         List<Location> locations = new ArrayList<>();
         File dir = new File(locationDir);
@@ -82,10 +84,13 @@ public class DynamicMDPController {
         HashMap<Object, Object> mergedAttributes = new HashMap<>();
         Termination[] localGoals = new Termination[locations.size()];
         for (int i = 0; i < locations.size(); i++) {
-            localControllers[i] = new LocalController(locations.get(i));
-            try {
+            localControllers[i] = new LocalController(locations.get(i), wc, wt, gamma);
+            try 
+            {
                 localControllers[i].planFromState();
-            } catch (FinalStateException ex) {
+            } 
+            catch (FinalStateException ex) 
+            {
                 System.out.println("No need to optimize: subsystem already in final state");
             }
             mergedAttributes.putAll(localControllers[i].getStateAttributes());
@@ -93,7 +98,7 @@ public class DynamicMDPController {
         }
 
         //Generating full MDP
-        globalController = new GlobalController(locationDir + "/termination.term", locations, mergedAttributes, localGoals);
+        globalController = new GlobalController(locationDir + "/termination.term", locations, mergedAttributes, localGoals, wc, wt, gamma);
         try {
             globalController.planFromState();
         } catch (FinalStateException ex) {
@@ -108,6 +113,15 @@ public class DynamicMDPController {
 
     public GlobalController getGlobalController() {
         return globalController;
+    }
+
+    public void setupAndRunController(double cost, double time, double gamma) throws Exception {
+        locationDir = "C:/Classes/reasearch/GME_Models/";
+        stateGenThread = 4;
+        nThread = 4;
+        
+        controller = DynamicMDPController.getInstance();
+        controller.run(cost, time, gamma);
     }
     
     

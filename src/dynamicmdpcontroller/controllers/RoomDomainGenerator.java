@@ -43,13 +43,15 @@ public class RoomDomainGenerator {
     public Hashtable<String, String> attributeTypes;
     private List<GMEAction> actions = null;
 
-    public RoomDomainGenerator(Location room) throws Exception {
+    public RoomDomainGenerator(Location room, double wc, double wt) throws Exception {
         attributeTypes = new Hashtable<>();
         domain = new SADomain();
         actionType = new MyActionType();
         domain.addActionType(actionType);
         sm = new StateModel();
         rf = new Reward();
+        rf.setWc(wc);
+        rf.setWt(wt);
         this.room = room;
         tf = room.getLocalGoal();
         rf.setTermination(tf);
@@ -97,12 +99,14 @@ public class RoomDomainGenerator {
         this.tf = tf;
     }
 
-    public DynamicMDPState initialStateGenerator() {
+    public DynamicMDPState initialStateGenerator() 
+    {
         DynamicMDPState initialState = new DynamicMDPState();
         Location l = room;
         String locationName = l.getName();
         Iterator<Thing> things = l.getThings().iterator();
-        while (things.hasNext()) {
+        while (things.hasNext()) 
+        {
             Thing t = things.next();
             String thingName = t.getName();
             Iterator<VirtualEntity> ves = t.getVirtualEntities().iterator();
@@ -162,6 +166,7 @@ public class RoomDomainGenerator {
                     action.setPrefix("");
                     action.setCost(bean.getCost());
                     action.setExecTime(bean.getExecTime());
+                    action.updateHashMaps();
                     actionType.addAction(action.actionName(), action);
                     this.actions.add(action);
                 }

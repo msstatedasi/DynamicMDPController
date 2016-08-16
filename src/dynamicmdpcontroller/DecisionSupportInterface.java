@@ -5,6 +5,7 @@
  */
 package dynamicmdpcontroller;
 
+import burlap.behavior.singleagent.Episode;
 import dynamicmdpcontroller.actions.GMEAction;
 import dynamicmdpcontroller.controllers.FinalStateException;
 import java.util.List;
@@ -21,11 +22,24 @@ public interface DecisionSupportInterface {
     List<DynamicMDPState> getLocalOptimalPath(int index, DynamicMDPState s) throws FinalStateException;
     double getGlobalPathReward(DynamicMDPState s) throws FinalStateException;
     double getLocalPathReward(int index, DynamicMDPState s) throws FinalStateException;
-    String printState(DynamicMDPState s);
+    double getLocalPathReward(int index, List<GMEAction> actions, List<DynamicMDPState> states);
+    Episode getEpisodeFromState(int index, DynamicMDPState s);
+    void printState(DynamicMDPState s);
+    String stateString(DynamicMDPState s);
     List<String> getAllStateAttributes(DynamicMDPState s);
+    Object getValueForAttribute(DynamicMDPState s, String str);
     List<GMEAction> getAllLocalDefinedActions(int index);
     List<GMEAction> getAllGlobalDefinedActions();
     
     double getLocalStateValue(int index, DynamicMDPState s) throws FinalStateException;
     double getGlobalStateValue(DynamicMDPState s) throws FinalStateException;
+    
+    DynamicMDPState getInitalState(int index);
+    List<DynamicMDPState> getAllStates(int index);
+    List<DynamicMDPState> getResultingStates(DynamicMDPState s, GMEAction a);
+    boolean isTerminalState(int index, DynamicMDPState s);
+    
+    
+    int getNumOfLocalControllers();
+    String getNameOfController(int index);
 }

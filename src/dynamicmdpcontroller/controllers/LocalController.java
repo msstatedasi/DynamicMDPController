@@ -36,19 +36,28 @@ public class LocalController {
     private RoomDomainGenerator domainGen = null;
     private DynamicMDPState initialState = null;
     private ValueIteration planner = null;
+    Policy p = null;
+    private double gamma = 0;
+    private double wc;
+    private double wt;
 
-    public LocalController(Location l) throws Exception {
+    public LocalController(Location l, double wc, double wt, double gamma) throws Exception {
         this.l = l;
+        this.wc = wc;
+        this.wt = wt;
+        this.gamma = gamma;
         initialState = init();
         stateAttributes = new HashMap<>();
+
     }
 
     private DynamicMDPState init() throws Exception {
         System.out.println("---- Working on room: " + l.getName() + " ----");
-        domainGen = new RoomDomainGenerator(l);
+        domainGen = new RoomDomainGenerator(l, wc, wt);
         domainGen.registerActions();
         domain = domainGen.getDomain();
         initialState = domainGen.initialStateGenerator();
+
         tf = domainGen.getTf();
         return initialState;
     }
@@ -59,22 +68,24 @@ public class LocalController {
     }
 
     public void planFromState() throws FinalStateException {
-        if (domain.getModel().terminal(initialState)) {
+        if (domain.getModel().terminal(initialState)) 
+        {
             episode = null;
             stateAttributes.putAll(initialState.getAttributes());
             throw new FinalStateException();
         }
         SimpleHashableStateFactory hashingFactory = new SimpleHashableStateFactory(false);
 //            ValueIteration planner = new ValueIteration(domain, 0.99, hashingFactory, 1e-3, 100);
-        planner = new ParallelVI(domain, 0.99, hashingFactory,
+ 
+        planner = new ParallelVI(domain, this.gamma, hashingFactory,
                 1e-10, 100, DynamicMDPController.stateGenThread, DynamicMDPController.nThread);
         DynamicMDPState finalState = initialState;
         System.out.println("---- " + l.getName() + " is not in goal state ----");
 //                planner.performReachabilityFrom(initialState);
-        Policy p = planner.planFromState(initialState);
+        p = planner.planFromState(initialState);
         episode = PolicyUtils.rollout(p, initialState, domain.getModel());
         Iterator<Action> actions = episode.actionSequence.iterator();
-
+        
         System.out.println("---- Actions to be executed in the " + l.getName() + ": ----");
 
         while (actions.hasNext()) {
@@ -113,6 +124,15 @@ public class LocalController {
 
     public ValueIteration getPlanner() {
         return planner;
+    }
+
+    public Episode getOptimalPathFrom(DynamicMDPState s) {
+        Episode e = PolicyUtils.rollout(p, s, domain.getModel());
+        return e;
+    }
+
+    public DynamicMDPState getInitState() {
+        return initialState;
     }
     
     
