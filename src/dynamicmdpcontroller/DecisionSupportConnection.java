@@ -293,7 +293,7 @@ public class DecisionSupportConnection implements DecisionSupportInterface
     @Override
     public String getNameOfController(int index) 
     {
-        return "hi";
+        return "hello";
 
     }
 }
