@@ -6,7 +6,6 @@
 package dynamicmdpcontroller;
 
 import burlap.behavior.singleagent.Episode;
-import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
 import burlap.mdp.core.StateTransitionProb;
 import burlap.mdp.core.action.Action;
 import burlap.mdp.core.state.State;
@@ -295,5 +294,6 @@ public class DecisionSupportConnection implements DecisionSupportInterface
     public String getNameOfController(int index) 
     {
         return "hi";
+
     }
 }
